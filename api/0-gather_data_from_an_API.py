@@ -5,6 +5,15 @@ import requests
 base_url = "https://jsonplaceholder.typicode.com"
 
 def get_employee_todo_progress(employee_id):
+    """
+    Get and display an employee's TODO list progress based on their employee ID.
+
+    Args:
+        employee_id (int): The employee's ID for whom to retrieve the progress.
+
+    Returns:
+        None
+    """
     try:
         # Fetch user information
         user_response = requests.get(f"{base_url}/users/{employee_id}")
