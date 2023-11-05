@@ -1,46 +1,31 @@
 #!/usr/bin/python3
 """
-This script retrieves and displays an employee's TODO list progress based on their employee ID.
-It uses a REST API to fetch user information and the TODO list for the specified employee.
+    python script that returns TODO list progress for a given employee ID
 """
-
+import json
 import requests
+from sys import argv
 
-# Define the base URL of the REST API
-base_url = "https://jsonplaceholder.typicode.com"
-
-def get_employee_todo_progress(employee_id):
-
-    try:
-        # Fetch user information
-        user_response = requests.get(f"{base_url}/users/{employee_id}")
-        user_data = user_response.json()
-
-        # Check if "name" exists in the user data
-        if "name" in user_data:
-            employee_name = user_data["name"]
-        else:
-            employee_name = "Unknown"
-
-        # Fetch TODO list for the employee
-        todo_response = requests.get(f"{base_url}/todos?userId={employee_id}")
-        todo_data = todo_response.json()
-
-        # Calculate progress
-        total_tasks = len(todo_data)
-        completed_tasks = sum(1 for task in todo_data if task["completed"])
-
-        # Display the progress
-        print(f"Employee {employee_name} is done with tasks ({completed_tasks}/{total_tasks}):")
-
-        for task in todo_data:
-            if task["completed"]:
-                print(f"\t{task['title']}")
-
-    except requests.exceptions.RequestException as e:
-        print(f"Error: {e}")
 
 if __name__ == "__main__":
-    employee_id = int(input("Enter the employee ID: "))
-    get_employee_todo_progress(employee_id)
+    """ Functions for gathering  data from an API """
+    request_employee = requests.get(
+        'https://jsonplaceholder.typicode.com/users/{}/'.format(argv[1]))
+    employee = json.loads(request_employee.text)
+    employee_name = employee.get("name")
+    request_todos = requests.get(
+        'https://jsonplaceholder.typicode.com/users/{}/todos'.format(argv[1]))
+    tasks = {}
+    employee_todos = json.loads(request_todos.text)
 
+    for dictionary in employee_todos:
+        tasks.update({dictionary.get("title"): dictionary.get("completed")})
+
+    EMPLOYEE_NAME = employee_name
+    TOTAL_NUMBER_OF_TASKS = len(tasks)
+    NUMBER_OF_DONE_TASKS = len([k for k, v in tasks.items() if v is True])
+    print("Employee {} is done with tasks({}/{}):".format(
+        EMPLOYEE_NAME, NUMBER_OF_DONE_TASKS, TOTAL_NUMBER_OF_TASKS))
+    for k, v in tasks.items():
+        if v is True:
+            print("\t {}".format(k))
