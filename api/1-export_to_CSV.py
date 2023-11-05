@@ -58,4 +58,3 @@ if __name__ == "__main__":
         writer = csv.writer(user, delimiter=',', quoting=csv.QUOTE_ALL)
         for k, v in tasks.items():
             writer.writerow([USER_ID, userName, v, k])
-
